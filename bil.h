@@ -1,0 +1,1 @@
+#define ARC_DISTANCE 22
