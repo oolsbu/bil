@@ -14,11 +14,8 @@ class PID {
         float derivative = 0;
 
     public: 
-        PID(String name, float kp, float ki, float kd){
-            this->name = name;
-            this->Kp = kp;
-            this->Ki = ki;
-            this->Kd = kd;
+        PID(String name){
+            name = name;
             
     }
     float calculatePidOutput(float error, unsigned long previousTime) {

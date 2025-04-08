@@ -52,9 +52,9 @@ void trigRightWheel (){
 }
 
 //class instantiation
-PID anglePid("anglePID", KP_VERDI, KI_VERDI, KD_VERDI);
+PID anglePid("anglePID");
 // Skal vi adde egne kp, ki og kd verdier for både retning og fart?
-PID SpeedPid("speedPID", KP_VERDI, KI_VERDI, KD_VERDI);
+PID SpeedPid("speedPID");
 
 Motor leftMotor("left", ENA, IN1, IN2);
 Motor rightMotor("right", ENB, IN3, IN4);
