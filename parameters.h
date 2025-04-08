@@ -6,3 +6,7 @@
 #define WANTED_SPEED 0.3
 #define TURN_RADIUS 1.0
 #define WHEEL_DIAMETER 6.5
+#define STARTSPEED_VALUE 150
+#define MAX_INTEGRAL 1
+#define NUM_SLITS 20
+#define FREQUENCY 1
