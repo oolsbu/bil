@@ -7,6 +7,7 @@ class PID {
         float Kp = KP_VERDI;
         float Ki = KI_VERDI;
         float Kd = KD_VERDI;
+        String name;
 
         float error = 0;
         float previousError = 0;
@@ -31,6 +32,16 @@ class PID {
 
         // Calculate PID output
         float pidOutput = (Kp * error) + (Ki * integral) + (Kd * derivative);
+        if(DEBUG == 1){
+            Serial.print("error: ");
+            Serial.print(error);
+            Serial.print(" integral: ");
+            Serial.print(integral);
+            Serial.print(" derivative: ");
+            Serial.print(derivative);
+            Serial.print(" pidOutput: ");
+            Serial.println(pidOutput);
+        }
 
         // Update previous error
         previousError = error; 
