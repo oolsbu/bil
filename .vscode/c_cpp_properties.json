@@ -1,106 +1,19 @@
 {
-    "configurations": [
-        {
-            "name": "PlatformIO",
-            "includePath": [
-                "C:/Users/freols004/Documents/PlatformIO/Projects/250407-130904-uno_r4_wifi/include",
-                "C:/Users/freols004/Documents/PlatformIO/Projects/250407-130904-uno_r4_wifi/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/tinyusb",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/cores/arduino",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/api/deprecated",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/api/deprecated-avr-comp",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/variants/UNOWIFIR4",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/AnalogWave",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Arduino_CAN/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Arduino_FreeRTOS/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Arduino_LED_Matrix/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/BlockDevices",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/EEPROM/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/FATFilesystem",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/HID",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/I2S",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/LittleFilesystem",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/OPAMP/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/OTAUpdate/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Preferences/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/RTC/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/SDU/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/SPI",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/SoftwareATSE/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/SoftwareSerial/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Storage",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/WDT/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Wire",
-                "",
-                "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/variants/UNOWIFIR4/includes/ra/fsp/inc/api"
-            ],
-            "browse": {
-                "limitSymbolsToIncludedHeaders": true,
-                "path": [
-                    "C:/Users/freols004/Documents/PlatformIO/Projects/250407-130904-uno_r4_wifi/include",
-                    "C:/Users/freols004/Documents/PlatformIO/Projects/250407-130904-uno_r4_wifi/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/tinyusb",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/cores/arduino",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/api/deprecated",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/cores/arduino/api/deprecated-avr-comp",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/variants/UNOWIFIR4",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/AnalogWave",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Arduino_CAN/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Arduino_FreeRTOS/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Arduino_LED_Matrix/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/BlockDevices",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/EEPROM/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/FATFilesystem",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/HID",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/I2S",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/LittleFilesystem",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/OPAMP/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/OTAUpdate/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Preferences/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/RTC/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/SDU/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/SPI",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/SoftwareATSE/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/SoftwareSerial/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Storage",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/WDT/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/WiFiS3/src",
-                    "C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/libraries/Wire",
-                    ""
-                ]
-            },
-            "defines": [
-                "PLATFORMIO=60118",
-                "ARDUINO_UNOWIFIR4",
-                "ARDUINO_ARCH_RENESAS_UNO",
-                "ARDUINO_UNOR4_WIFI",
-                "NO_USB",
-                "BACKTRACE_SUPPORT",
-                "LWIP_DNS=1",
-                "CFG_TUSB_MCU=OPT_MCU_RAXXX",
-                "_RA_CORE=CM4",
-                "_RENESAS_RA_",
-                "ARDUINO=10810",
-                "ARDUINO_ARCH_RENESAS",
-                "ARDUINO_FSP",
-                "_XOPEN_SOURCE=700",
-                "F_CPU=48000000L",
-                ""
-            ],
-            "cStandard": "gnu11",
-            "cppStandard": "gnu++17",
-            "compilerPath": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.38.33130/bin/Hostx86/x86/cl.exe",
-            "compilerArgs": [
-                "-mcpu=cortex-m4",
-                "-mfloat-abi=hard",
-                "-mfpu=fpv4-sp-d16",
-                "-mthumb",
-                "-iprefixC:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno",
-                "@C:/Users/freols004/.platformio/packages/framework-arduinorenesas-uno/variants/UNOWIFIR4/includes.txt",
-                ""
-            ]
-        }
-    ],
-    "version": 4
+  "configurations": [
+    {
+      "name": "Arduino",
+      "includePath": [
+        "${workspaceFolder}/**",
+        "C:/Users/fmols/AppData/Local/Arduino15/packages/arduino/hardware/avr/1.8.6/cores/arduino",
+        "C:/Users/fmols/AppData/Local/Arduino15/packages/arduino/hardware/avr/1.8.6/variants/standard",
+        "C:/Users/fmols/AppData/Local/Arduino15/packages/arduino/hardware/avr/1.8.6/libraries/**"
+      ],
+      "defines": ["ARDUINO=10805", "F_CPU=16000000L", "ARDUINO_ARCH_AVR", "ARDUINO_AVR_UNO"],
+      "compilerPath": "C:/Users/fmols/AppData/Local/Arduino15/packages/arduino/tools/avr-gcc/7.3.0-atmel3.6.1-arduino7/bin/avr-gcc.exe",
+      "cStandard": "c11",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "gcc-x64"
+    }
+  ],
+  "version": 4
 }
