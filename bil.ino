@@ -1,217 +1,224 @@
-#include "bil.h"
 #include <Arduino.h>
+#include "parameters.h"
+#include "pid.h"
+#include "motor.h"
+#include "calculations.h"
 
+// -------------------- PIN DEFINITIONS --------------------
 // Pulse counter pins
-int interruptPinLeft = 2;
-int interruptPinRight = 3;
-
-// Defining pulse counters
-volatile int rightPulseCount = 0;
-volatile int leftPulseCount = 0;
-
-// Defining statistics
-int rightWheelRotations = 0;
-int leftWheelRotations = 0;
-int rightWheelSpeed = 0;
-int leftWheelSpeed = 0;
-
-// light sensor PID
-float Kp = KP_VERDI;
-float Ki = KI_VERDI;
-float Kd = KD_VERDI;
-
-float error = 0;
-float previousError = 0;
-float integral = 0;
-float derivative = 0;
-unsigned long previousTime = 0;
+const int interruptPinLeft = 2;
+const int interruptPinRight = 3;
 
 // Motor A
-int IN1 = 8;
-int IN2 = 7;
-int ENA = 9;
+const int IN1 = 8;
+const int IN2 = 7;
+const int ENA = 9;
 
 // Motor B
-int IN3 = 5;
-int IN4 = 4;
-int ENB = 10;
+const int IN3 = 5;
+const int IN4 = 4;
+const int ENB = 10;
 
-// photoresistors
-int lightRightPin = A1;
+// Photoresistors
+const int lightRightPin = A1;
+const int lightLeftPin = A0;
+
+// -------------------- GLOBAL VARIABLES --------------------
+// Pulse counters
+volatile long rightPulseCount = 0;
+volatile long leftPulseCount = 0;
+long lastRightPulseCount = 0;
+long lastLeftPulseCount = 0;
+
+// Timing
+unsigned long previousTime = 0;
+unsigned long lastTime = 0;
+
+// Motor speeds
+float leftWheelSpeedArc = 0;
+float rightWheelSpeedArc = 0;
+int baseSpeed = BASE_START_SPEED;
+
+// Light sensor readings
 int readLightRight = 0;
-int lightLeftPin = A0;
 int readLightLeft = 0;
+int startError = 0;
 
-void trigLeftWheel (){
+// -------------------- CLASS INSTANTIATIONS --------------------
+PID anglePid("anglePID", ANGLE_PID_KP, ANGLE_PID_KI, ANGLE_PID_KD, ANGLE_PID_MAX_INTEGRAL);
+PID speedPid("speedPID", SPEED_PID_KP, SPEED_PID_KI, SPEED_PID_KD, SPEED_PID_MAX_INTEGRAL);
+
+Motor leftMotor("left", ENA, IN1, IN2);
+Motor rightMotor("right", ENB, IN3, IN4);
+
+Calculations calculate("");
+
+// -------------------- INTERRUPT HANDLERS --------------------
+void trigLeftWheel() {
     leftPulseCount++;
 }
 
-void trigRightWheel (){
+void trigRightWheel() {
     rightPulseCount++;
 }
 
-// float calculateDistance(int readLeft, int readRight){
-//     int minste = min(readLeft,readRight);
-//    return (0.0927611617 * minste - 0.7325530993);
-// }
-
-void runLeft(int speed, boolean drive, boolean direction){
-    if(!drive){
-        digitalWrite(ENA, LOW);
-        digitalWrite(IN1, LOW);
-        digitalWrite(IN2, HIGH);
-        Serial.println("Left Motor stopped running!");
-        return;
-    }
-    switch(direction){
-        case true:
-            digitalWrite(IN1, LOW);
-            digitalWrite(IN2, HIGH);
-            analogWrite(ENA, speed);
-            Serial.println("Left Motor running clockwise!");
-            break;
-        case false:
-            digitalWrite(IN1, HIGH);
-            digitalWrite(IN2, LOW);
-            analogWrite(ENA, speed);
-            Serial.println("Left Motor running counter-clockwise!");
-            break;      
-    }
-}
-void runRight(int speed, boolean drive, boolean direction){
-    if(!drive){
-        digitalWrite(ENB, HIGH);
-        digitalWrite(IN3, LOW);
-        digitalWrite(IN4, LOW);
-        Serial.println("Right Motor stopped running!");
-        return;
-    }
-    switch(direction){
-        case true:
-            digitalWrite(IN3, LOW);
-            digitalWrite(4, HIGH);
-            analogWrite(ENB, speed);
-            Serial.println("Right Motor running clockwise!");
-            break;
-        case false:
-            digitalWrite(IN3, HIGH);
-            digitalWrite(IN4, LOW);
-            analogWrite(ENB, speed);
-            Serial.println("Right Motor counter-clockwise!");
-            break;      
-    }
-}
-
-void read_LightSensors() {
-    // Reads light sensors
-    int readLightRight = analogRead(lightRightPin);
-    int readLightLeft = analogRead(lightLeftPin);
-}
-
-void calculate_pid() {
-    // Read light sensor values
-    int lightLeft = analogRead(lightLeftPin);
-    int lightRight = analogRead(lightRightPin);
-
-    // Calculate error (difference between left and right light intensity)
-    error = lightLeft - lightRight;
-
-    // Calculate time difference
-    unsigned long currentTime = millis();
-    float deltaTime = (currentTime - previousTime) / 1000.0; // Convert to seconds
-    previousTime = currentTime;
-
-    // Calculate integral (accumulated error over time)
-    integral += error * deltaTime;
-
-    // Calculate derivative (rate of change of error)
-    derivative = (error - previousError) / deltaTime;
-
-    // Calculate PID output
-    float pidOutput = (Kp * error) + (Ki * integral) + (Kd * derivative);
-
-    // Update previous error
-    previousError = error;
-
-    // Use the PID output to adjust motor speeds
-    int baseSpeed = 150; // Base motor speed
-    int leftMotorSpeed = constrain(baseSpeed + pidOutput, 0, 255);
-    int rightMotorSpeed = constrain(baseSpeed - pidOutput, 0, 255);
-
-    // Run motors with adjusted speeds
-    runLeft(leftMotorSpeed, true, true);
-    runRight(rightMotorSpeed, true, true);
-}
-
-
-float calculateArcWheelSpeed(boolean outer, int radius, int wheelDistance, int wantedSpeed){
-return outer ? (wantedSpeed * (radius) + (wheelDistance / 2)): (wantedSpeed * (radius) - (wheelDistance / 2));
-}
-
-double calculateRPS(int counter){
-    const int numberOfSlits = 20;
-    const int oscillatorFrequency = 1;
-    int N = counter;
-
-    double rps = static_cast<double>(N * oscillatorFrequency) / numberOfSlits;
-
-    return rps;
-}
-double calculateMPS(double RPS, double diameter){
-    return (RPS * diameter * PI) / 60.0;
-}
-
-
+// -------------------- SETUP FUNCTION --------------------
 void setup() {
-    // Initiate pulse sensor pins
+    Serial.begin(115200);
+
+    // Initialize pulse sensor pins
     pinMode(interruptPinLeft, INPUT_PULLUP);
     pinMode(interruptPinRight, INPUT_PULLUP);
 
-    // Initiate motor A pins
+    // Initialize motor pins
     pinMode(IN1, OUTPUT);
     pinMode(IN2, OUTPUT);
-    pinMode(ENA, OUTPUT);
-
-    // Initiate motor B pins
     pinMode(ENA, OUTPUT);
     pinMode(IN3, OUTPUT);
     pinMode(IN4, OUTPUT);
     pinMode(ENB, OUTPUT);
 
-    // Initiate light resistor pins
+    // Initialize light resistor pins
     pinMode(lightRightPin, INPUT);
     pinMode(lightLeftPin, INPUT);
 
-    Serial.begin(9600);
-    attachInterrupt(digitalPinToInterrupt(interruptPinRight), trigRightWheel, CHANGE);
-    attachInterrupt(digitalPinToInterrupt(interruptPinLeft), trigLeftWheel, CHANGE);
+    // Calculate initial light sensor error
+    startError = (analogRead(lightLeftPin) - analogRead(lightRightPin)) / 2;
+
+    // Attach interrupts
+    attachInterrupt(digitalPinToInterrupt(interruptPinRight), trigRightWheel, FALLING);
+    attachInterrupt(digitalPinToInterrupt(interruptPinLeft), trigLeftWheel, FALLING);
+
+    // Initialize mode-specific parameters
+    if (MODE == "LINE") {
+        leftMotor.run(WANTED_SPEED, true, false);
+        rightMotor.run(WANTED_SPEED, true, false);
+    } else if (MODE == "ARC") {
+        leftWheelSpeedArc = calculate.ArcWheelSpeed(true, ARC_TURN_RADIUS, WHEEL_DISTANCE, ARC_WANTED_SPEED);
+        rightWheelSpeedArc = calculate.ArcWheelSpeed(false, ARC_TURN_RADIUS, WHEEL_DISTANCE, ARC_WANTED_SPEED);
+        leftMotor.run(ARC_WANTED_SPEED_BITS, true, false);
+        rightMotor.run(ARC_WANTED_SPEED_BITS, true, false);
+    }
 }
 
-
+// -------------------- LOOP FUNCTION --------------------
 void loop() {
-    followMode();
-    delay(50);
+    if (MODE == "FOLLOW") {
+        followMode();
+    } else if (MODE == "LINE") {
+        Serial.println("LINE MODE!");
+        lineMode(LINE_TARGET_SPEED);
+    } else if (MODE == "ARC") {
+        Serial.println("ARC MODE!");
+        arcMode(ARC_TURN_RADIUS * PI);
+    } else {
+        Serial.println("INVALID MODE SELECTION, FIX IN parameters.h");
+    }
 }
 
+// -------------------- FOLLOW MODE --------------------
 void followMode() {
-    // Calculate PID to adjust motor speeds based on light sensor readings
-    // calculate_pid();
+    // Read light sensor values and adjust for starting error
+    readLightLeft = analogRead(lightLeftPin) - startError;
+    readLightRight = analogRead(lightRightPin) + startError;
 
-    // Calculate and print RPS for the left wheel
-    double leftRPS = calculateRPS(leftPulseCount);
-    Serial.print("Left wheel RPS: ");
-    Serial.println(leftRPS);
+    if (DEBUG_MODE) {
+        Serial.print("Start Error: ");
+        Serial.print(startError);
+        Serial.print(" Left: ");
+        Serial.print(readLightLeft);
+        Serial.print(" Right: ");
+        Serial.println(readLightRight);
+    }
 
-    // Reset the pulse count after calculating RPS
-    leftPulseCount = 0;
+    // Calculate distance to the car in front
+    float distance = calculate.distanceToCar(readLightLeft, readLightRight);
 
-    // Optionally, you can do the same for the right wheel if needed
-    double rightRPS = calculateRPS(rightPulseCount);
-    Serial.print("Right wheel RPS: ");
-    Serial.println(rightRPS);
-    rightPulseCount = 0;
+    // Use distance in a PID controller to adjust baseSpeed
+    float distanceError = FOLLOW_TARGET_DISTANCE - distance;
+    float distancePidOutput = speedPid.calculatePidOutput(distanceError, previousTime);
+    baseSpeed = constrain(baseSpeed + distancePidOutput, 0, 255);
 
-    // Print the speed of the car in meters per second
-    Serial.print("Speed: ");
-    Serial.println(calculateMPS(rightRPS, 6.5));
+    // Use angle PID controller to adjust for light difference
+    float pidOutput = anglePid.calculatePidOutput(readLightLeft - readLightRight, previousTime);
+
+    previousTime = millis();
+
+    // Calculate motor speeds
+    int leftMotorSpeed = constrain(baseSpeed + pidOutput * CONTROL_SENSITIVITY, 0, 255);
+    int rightMotorSpeed = constrain(baseSpeed - pidOutput * CONTROL_SENSITIVITY, 0, 255);
+
+    // Run motors with adjusted speeds
+    leftMotor.run(leftMotorSpeed, true, false);
+    rightMotor.run(rightMotorSpeed, true, false);
+}
+
+// -------------------- LINE MODE --------------------
+void lineMode(float targetSpeed) {
+    unsigned long now = millis();
+    if (now - lastTime >= CONTROL_INTERVAL) {
+        // Safely access pulse counters
+        noInterrupts();
+        long localLeftPulseCount = leftPulseCount - lastLeftPulseCount;
+        long localRightPulseCount = rightPulseCount - lastRightPulseCount;
+        lastLeftPulseCount = leftPulseCount;
+        lastRightPulseCount = rightPulseCount;
+        interrupts();
+
+        // Calculate actual speeds
+        float actualSpeedLeft = calculate.speedFromPulses(localLeftPulseCount, WHEEL_DIAMETER, CONTROL_INTERVAL);
+        float actualSpeedRight = calculate.speedFromPulses(localRightPulseCount, WHEEL_DIAMETER, CONTROL_INTERVAL);
+
+        // Calculate speed errors
+        float errorLeft = targetSpeed - actualSpeedLeft;
+        float errorRight = targetSpeed - actualSpeedRight;
+
+        // Use PID controllers to adjust motor speeds
+        float pidLeft = speedPid.calculatePidOutput(errorLeft, lastTime);
+        float pidRight = speedPid.calculatePidOutput(errorRight, lastTime);
+
+        int leftMotorSpeed = constrain(WANTED_SPEED + pidLeft * CONTROL_SENSITIVITY, 0, 255);
+        int rightMotorSpeed = constrain(WANTED_SPEED + pidRight * CONTROL_SENSITIVITY, 0, 255);
+
+        // Run motors with adjusted speeds
+        leftMotor.run(leftMotorSpeed, true, false);
+        rightMotor.run(rightMotorSpeed, true, false);
+
+        lastTime = now;
+    }
+}
+
+// -------------------- ARC MODE --------------------
+void arcMode(float targetDistance) {
+    unsigned long now = millis();
+    if (now - lastTime >= CONTROL_INTERVAL) {
+        // Safely access pulse counters
+        noInterrupts();
+        long localLeftPulseCount = leftPulseCount - lastLeftPulseCount;
+        long localRightPulseCount = rightPulseCount - lastRightPulseCount;
+        lastLeftPulseCount = leftPulseCount;
+        lastRightPulseCount = rightPulseCount;
+        interrupts();
+
+        // Calculate actual speeds
+        float actualSpeedLeft = calculate.speedFromPulses(localLeftPulseCount, WHEEL_DIAMETER, CONTROL_INTERVAL);
+        float actualSpeedRight = calculate.speedFromPulses(localRightPulseCount, WHEEL_DIAMETER, CONTROL_INTERVAL);
+
+        // Calculate speed errors
+        float errorLeft = leftWheelSpeedArc - actualSpeedLeft;
+        float errorRight = rightWheelSpeedArc - actualSpeedRight;
+
+        // Use PID controllers to adjust motor speeds
+        float pidLeft = speedPid.calculatePidOutput(errorLeft, lastTime);
+        float pidRight = speedPid.calculatePidOutput(errorRight, lastTime);
+
+        int leftMotorSpeed = constrain(ARC_WANTED_SPEED_BITS + pidLeft * CONTROL_SENSITIVITY, 0, 255);
+        int rightMotorSpeed = constrain(ARC_WANTED_SPEED_BITS + pidRight * CONTROL_SENSITIVITY, 0, 255);
+
+        // Run motors with adjusted speeds
+        leftMotor.run(leftMotorSpeed, true, false);
+        rightMotor.run(rightMotorSpeed, true, false);
+
+        lastTime = now;
+    }
 }
