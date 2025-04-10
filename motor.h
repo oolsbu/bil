@@ -24,9 +24,7 @@ class Motor {
     if(!drive){
         digitalWrite(ENA, LOW);
         digitalWrite(IN1, LOW);
-        digitalWrite(IN2, HIGH);
-        // Serial.print(name);
-        // Serial.println(" Motor stopped running!");
+        digitalWrite(IN2, LOW);
         return;
     }
     switch(direction){
@@ -34,15 +32,11 @@ class Motor {
             digitalWrite(IN1, LOW);
             digitalWrite(IN2, HIGH);
             analogWrite(ENA, speed);
-            // Serial.print(name);
-            // Serial.println(" Motor running clockwise!");
             break;
         case false:
             digitalWrite(IN1, HIGH);
             digitalWrite(IN2, LOW);
             analogWrite(ENA, speed);
-            // Serial.print(name);
-            // Serial.println(" Motor running counter-clockwise!");
             break;      
     }
 }
