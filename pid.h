@@ -38,16 +38,16 @@ class PID {
             // Calculate PID output
             float pidOutput = (Kp * error) + (Ki * integral) + (Kd * derivative);
             if (DEBUG_MODE == 1) {
-                Serial.print("PID [");
-                Serial.print(name);
-                Serial.print("] error: ");
-                Serial.print(error);
-                Serial.print(" integral: ");
-                Serial.print(integral);
-                Serial.print(" derivative: ");
-                Serial.print(derivative);
-                Serial.print(" pidOutput: ");
-                Serial.println(pidOutput);
+                // Serial.print("PID [");
+                // Serial.print(name);
+                // Serial.print("] error: ");
+                // Serial.print(error);
+                // Serial.print(" integral: ");
+                // Serial.print(integral);
+                // Serial.print(" derivative: ");
+                // Serial.print(derivative);
+                // Serial.print(" pidOutput: ");
+                // Serial.println(pidOutput);
             }
 
             // Update previous error
